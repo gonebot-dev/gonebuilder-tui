@@ -14,7 +14,11 @@ func (app App) Init() tea.Cmd {
 }
 
 func (app App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return app, app.CurrentScene.Update(msg)
+	nextScene, cmd := app.CurrentScene.Update(msg)
+	if nextScene != nil {
+		app.CurrentScene = nextScene
+	}
+	return app, cmd
 }
 
 func (app App) View() string {
@@ -22,5 +26,7 @@ func (app App) View() string {
 }
 
 func CreateApp() App {
-	return App{}
+	return App{
+		CurrentScene: nil,
+	}
 }

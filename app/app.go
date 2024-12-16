@@ -2,11 +2,12 @@ package app
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/gonebot-dev/gonebuilder-tui/app/scenes"
+	_ "github.com/gonebot-dev/gonebuilder-tui/app/router"
+	"github.com/gonebot-dev/gonebuilder-tui/app/scene"
 )
 
 type App struct {
-	CurrentScene scenes.Scene
+	CurrentScene string
 }
 
 func (app App) Init() tea.Cmd {
@@ -15,16 +16,16 @@ func (app App) Init() tea.Cmd {
 
 func (app App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-	app.CurrentScene, cmd = app.CurrentScene.Update(msg)
+	app.CurrentScene, cmd = scene.Update(app.CurrentScene, msg)
 	return app, cmd
 }
 
 func (app App) View() string {
-	return app.CurrentScene.View()
+	return scene.View(app.CurrentScene)
 }
 
 func CreateApp() App {
 	return App{
-		CurrentScene: scenes.InitialScene,
+		CurrentScene: "InitialScene",
 	}
 }

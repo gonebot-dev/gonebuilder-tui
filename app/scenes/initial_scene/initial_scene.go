@@ -1,20 +1,17 @@
-package scenes
+package initialscene
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/gonebot-dev/gonebuilder-tui/app/scene"
 )
 
 type initialScene struct {
-	Scene
+	scene.Scene
 }
 
-func (is initialScene) Name() string {
-	return "[app_initial]initial_scene"
-}
-
-func (is initialScene) Update(msg tea.Msg) (Scene, tea.Cmd) {
+func (is initialScene) Update(msg tea.Msg) (scene.Scene, string, tea.Cmd) {
 	// TODO: Implement
-	return is, nil
+	return is, "InitialScene", nil
 }
 
 func (is initialScene) View() string {

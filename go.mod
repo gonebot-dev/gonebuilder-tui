@@ -1,6 +1,6 @@
 module github.com/gonebot-dev/gonebuilder-tui
 
-go 1.22.1
+go 1.22.7
 
 require github.com/charmbracelet/bubbletea v1.2.4
 

@@ -11,7 +11,7 @@ import (
 func main() {
 	app := tea.NewProgram(app.CreateApp(), tea.WithAltScreen())
 	if _, err := app.Run(); err != nil {
-		fmt.Println("Error running program: ", err)
+		fmt.Println("Error running gonebuilder: ", err)
 		os.Exit(1)
 	}
 }

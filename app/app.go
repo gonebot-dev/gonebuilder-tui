@@ -6,7 +6,7 @@ import (
 )
 
 type App struct {
-	CurrentScene *scenes.Scene
+	CurrentScene scenes.Scene
 }
 
 func (app App) Init() tea.Cmd {
@@ -14,10 +14,8 @@ func (app App) Init() tea.Cmd {
 }
 
 func (app App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	nextScene, cmd := app.CurrentScene.Update(msg)
-	if nextScene != nil {
-		app.CurrentScene = nextScene
-	}
+	var cmd tea.Cmd
+	app.CurrentScene, cmd = app.CurrentScene.Update(msg)
 	return app, cmd
 }
 
@@ -27,6 +25,6 @@ func (app App) View() string {
 
 func CreateApp() App {
 	return App{
-		CurrentScene: nil,
+		CurrentScene: scenes.InitialScene,
 	}
 }

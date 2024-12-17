@@ -2,6 +2,7 @@ package initialscene
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/charmbracelet/bubbles/progress"
@@ -55,7 +56,11 @@ func (is initialScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		is.progress.Width = msg.Width - MainFrame.Padding
 	case tickMsg:
 		if is.loadingElapsed >= is.options.loadingDuration {
-			return is, tea.Quit
+			if os.Getenv("DEBUG") == "true" {
+				return is, tea.Quit
+			} else {
+				return router.GetScene("MenuScene"), nil
+			}
 		}
 		is.loadingElapsed += is.options.tickInterval
 		is.loadingPercent = ease.OutBounce(
@@ -71,7 +76,11 @@ func (is initialScene) View() string {
 		Width(is.sceneWidth).
 		Height(is.sceneHeight).
 		Render(
-			fmt.Sprintf("%s\n\n\n%s", Banner, is.progress.ViewAs(is.loadingPercent)),
+			fmt.Sprintf(
+				"%s\n\n\n%s",
+				MainFrame.BannerStyle.Render(MainFrame.Banner),
+				is.progress.ViewAs(is.loadingPercent),
+			),
 		)
 }
 

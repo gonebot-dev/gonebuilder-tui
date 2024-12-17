@@ -2,8 +2,9 @@ package app
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	_ "github.com/gonebot-dev/gonebuilder-tui/app/router"
-	"github.com/gonebot-dev/gonebuilder-tui/app/scene"
+	"github.com/gonebot-dev/gonebuilder-tui/app/router"
+	initialscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/initial_scene"
+	menuscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/menu_scene"
 )
 
 type App struct {
@@ -11,17 +12,22 @@ type App struct {
 }
 
 func (app App) Init() tea.Cmd {
-	return nil
+	return router.Init()
 }
 
 func (app App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-	app.CurrentScene, cmd = scene.Update(app.CurrentScene, msg)
+	app.CurrentScene, cmd = router.Update(app.CurrentScene, msg)
 	return app, cmd
 }
 
 func (app App) View() string {
-	return scene.View(app.CurrentScene)
+	return router.View(app.CurrentScene)
+}
+
+func init() {
+	router.RegisterScene("InitialScene", initialscene.InitialScene)
+	router.RegisterScene("MenuScene", menuscene.MenuScene)
 }
 
 func CreateApp() App {

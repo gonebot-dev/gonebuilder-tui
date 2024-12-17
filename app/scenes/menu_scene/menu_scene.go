@@ -2,19 +2,23 @@ package menuscene
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/gonebot-dev/gonebuilder-tui/app/scene"
+	"github.com/gonebot-dev/gonebuilder-tui/app/router"
 )
 
 type menuScene struct {
-	scene.Scene
+	router.Scene
 }
 
-func (is menuScene) Update(msg tea.Msg) (scene.Scene, string, tea.Cmd) {
+func (ms menuScene) Init() tea.Cmd {
+	return nil
+}
+
+func (ms menuScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// TODO: Implement
-	return is, "MenuScene", nil
+	return ms, nil
 }
 
-func (is menuScene) View() string {
+func (ms menuScene) View() string {
 	// TODO: Implement
 	return ""
 }

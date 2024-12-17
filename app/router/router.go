@@ -3,39 +3,37 @@ package router
 
 import tea "github.com/charmbracelet/bubbletea"
 
-type Scene struct {
+type Scene interface {
 	tea.Model
-	Name string
+	Name() string
 }
 
-var Scenes = make(map[string]tea.Model)
+var scenes = make(map[string]tea.Model)
 
 func Init() tea.Cmd {
-	cmds := make([]tea.Cmd, len(Scenes))
-	for _, scene := range Scenes {
+	cmds := make([]tea.Cmd, len(scenes))
+	for _, scene := range scenes {
 		cmds = append(cmds, scene.Init())
 	}
 	return tea.Batch(cmds...)
 }
 
-func RegisterScene(name string, scene tea.Model) {
-	sceneInstance := scene.(Scene)
-	sceneInstance.Name = name
-	Scenes[name] = sceneInstance
+func RegisterScene(scene Scene) {
+	scenes[scene.Name()] = scene
 }
 
 func GetScene(name string) Scene {
-	return Scenes[name].(Scene)
+	return scenes[name].(Scene)
 }
 
 func Update(name string, msg tea.Msg) (next string, cmd tea.Cmd) {
-	nextModel, cmd := Scenes[name].Update(msg)
+	nextModel, cmd := scenes[name].Update(msg)
 	nextScene := nextModel.(Scene)
-	next = nextScene.Name
-	Scenes[nextScene.Name] = nextScene
+	next = nextScene.Name()
+	scenes[nextScene.Name()] = nextScene
 	return
 }
 
 func View(name string) string {
-	return Scenes[name].View()
+	return scenes[name].View()
 }

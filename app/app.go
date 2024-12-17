@@ -26,8 +26,8 @@ func (app App) View() string {
 }
 
 func init() {
-	router.RegisterScene("InitialScene", initialscene.InitialScene)
-	router.RegisterScene("MenuScene", menuscene.MenuScene)
+	router.RegisterScene(initialscene.InitialScene)
+	router.RegisterScene(menuscene.MenuScene)
 }
 
 func CreateApp() App {

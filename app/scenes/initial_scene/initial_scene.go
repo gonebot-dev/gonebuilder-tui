@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fogleman/ease"
+	"github.com/gonebot-dev/gonebuilder-tui/app/base"
 	"github.com/gonebot-dev/gonebuilder-tui/app/router"
 )
 
@@ -25,10 +26,12 @@ type initialScene struct {
 	progress progress.Model
 
 	// Variables
-	sceneWidth     int
-	sceneHeight    int
 	loadingElapsed time.Duration
 	loadingPercent float64
+}
+
+func (is initialScene) Name() string {
+	return "InitialScene"
 }
 
 type tickMsg struct{}
@@ -51,9 +54,8 @@ func (is initialScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return is, tea.Quit
 		}
 	case tea.WindowSizeMsg:
-		is.sceneWidth = msg.Width
-		is.sceneHeight = msg.Height
-		is.progress.Width = msg.Width - MainFrame.Padding
+		base.WindowWidth = msg.Width
+		base.WindowHeight = msg.Height
 	case tickMsg:
 		if is.loadingElapsed >= is.options.loadingDuration {
 			if os.Getenv("DEBUG") == "true" {
@@ -72,9 +74,10 @@ func (is initialScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (is initialScene) View() string {
+	is.progress.Width = base.WindowWidth - MainFrame.Padding
 	return MainFrame.Style.
-		Width(is.sceneWidth).
-		Height(is.sceneHeight).
+		Width(base.WindowWidth).
+		Height(base.WindowHeight).
 		Render(
 			fmt.Sprintf(
 				"%s\n\n\n%s",

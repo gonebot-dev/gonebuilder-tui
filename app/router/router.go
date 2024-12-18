@@ -30,7 +30,11 @@ func Update(name string, msg tea.Msg) (next string, cmd tea.Cmd) {
 	nextModel, cmd := scenes[name].Update(msg)
 	nextScene := nextModel.(Scene)
 	next = nextScene.Name()
-	scenes[nextScene.Name()] = nextScene
+	if next != name {
+		scenes[nextScene.Name()], cmd = nextScene.Update(msg)
+	} else {
+		scenes[nextScene.Name()] = nextScene
+	}
 	return
 }
 

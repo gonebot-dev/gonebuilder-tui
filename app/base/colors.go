@@ -3,15 +3,17 @@ package base
 import "github.com/charmbracelet/lipgloss"
 
 var Colors = struct {
-	Red      lipgloss.CompleteAdaptiveColor
-	Green    lipgloss.CompleteAdaptiveColor
-	Blue     lipgloss.CompleteAdaptiveColor
-	Yellow   lipgloss.CompleteAdaptiveColor
-	Gray     lipgloss.CompleteAdaptiveColor
-	Lavender lipgloss.CompleteAdaptiveColor
-	GoBlue   lipgloss.CompleteAdaptiveColor
-	Primary  lipgloss.CompleteAdaptiveColor
-	Weak     lipgloss.CompleteAdaptiveColor
+	Red            lipgloss.CompleteAdaptiveColor
+	Green          lipgloss.CompleteAdaptiveColor
+	Blue           lipgloss.CompleteAdaptiveColor
+	Yellow         lipgloss.CompleteAdaptiveColor
+	Gray           lipgloss.CompleteAdaptiveColor
+	Lavender       lipgloss.CompleteAdaptiveColor
+	GoBlue         lipgloss.CompleteAdaptiveColor
+	Primary        lipgloss.CompleteAdaptiveColor
+	PrimaryReverse lipgloss.CompleteAdaptiveColor
+	Weak           lipgloss.CompleteAdaptiveColor
+	WeakReverse    lipgloss.CompleteAdaptiveColor
 }{
 	Red: lipgloss.CompleteAdaptiveColor{
 		Light: lipgloss.CompleteColor{
@@ -109,6 +111,18 @@ var Colors = struct {
 			TrueColor: "#e5eaf3",
 		},
 	},
+	PrimaryReverse: lipgloss.CompleteAdaptiveColor{
+		Light: lipgloss.CompleteColor{
+			ANSI:      "15",
+			ANSI256:   "255",
+			TrueColor: "#e5eaf3",
+		},
+		Dark: lipgloss.CompleteColor{
+			ANSI:      "0",
+			ANSI256:   "235",
+			TrueColor: "#303133",
+		},
+	},
 	Weak: lipgloss.CompleteAdaptiveColor{
 		Light: lipgloss.CompleteColor{
 			ANSI:      "8",
@@ -118,6 +132,18 @@ var Colors = struct {
 		Dark: lipgloss.CompleteColor{
 			ANSI:      "7",
 			ANSI256:   "248",
+			TrueColor: "#6c6e72",
+		},
+	},
+	WeakReverse: lipgloss.CompleteAdaptiveColor{
+		Light: lipgloss.CompleteColor{
+			ANSI:      "7",
+			ANSI256:   "248",
+			TrueColor: "#6c6e72",
+		},
+		Dark: lipgloss.CompleteColor{
+			ANSI:      "8",
+			ANSI256:   "239",
 			TrueColor: "#6c6e72",
 		},
 	},

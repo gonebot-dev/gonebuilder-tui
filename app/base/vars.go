@@ -8,4 +8,5 @@ var (
 	// Interactive
 	WindowHeight int
 	WindowWidth  int
+	Lang         string = "en"
 )

@@ -1,6 +1,9 @@
 package initialscene
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+	"github.com/gonebot-dev/gonebuilder-tui/app/base"
+)
 
 var MainFrame = struct {
 	Style       lipgloss.Style
@@ -21,18 +24,5 @@ var MainFrame = struct {
 		"╚██████╔╝╚██████╔╝██║ ╚████║███████╗██████╔╝╚██████╔╝   ██║   \n" +
 		" ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═════╝  ╚═════╝    ╚═╝   \n" +
 		"\n",
-	BannerStyle: lipgloss.NewStyle().Foreground(
-		lipgloss.CompleteAdaptiveColor{
-			Light: lipgloss.CompleteColor{
-				ANSI:      "14",
-				ANSI256:   "45",
-				TrueColor: "#367b99",
-			},
-			Dark: lipgloss.CompleteColor{
-				ANSI:      "6",
-				ANSI256:   "31",
-				TrueColor: "#367b99",
-			},
-		},
-	),
+	BannerStyle: lipgloss.NewStyle().Foreground(base.Colors.GoBlue),
 }

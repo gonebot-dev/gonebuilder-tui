@@ -28,10 +28,10 @@ func (ms menuScene) Init() tea.Cmd {
 func (ms menuScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.String() {
-		case tea.KeyCtrlC.String():
+		switch msg.Type {
+		case tea.KeyCtrlC:
 			return ms, tea.Quit
-		case tea.KeyCtrlL.String():
+		case tea.KeyCtrlL:
 			if base.Lang == "en" {
 				base.Lang = "zh"
 			} else {
@@ -55,34 +55,36 @@ func (ms menuScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if os.Getenv("DEBUG") == "true" {
 			return ms, tea.Quit
 		}
-		// TODO: Add jump
+		// TODO: Add jump scenes
 	}
 
 	return ms, tea.Batch(cmds...)
 }
 
 func (ms menuScene) View() string {
-	Header = Header.Width(base.WindowWidth)
-	Footer = Footer.Width(base.WindowWidth - 32)
-	Content = Content.Width(base.WindowWidth).
-		Height(base.WindowHeight - 6)
-	FormStyle = FormStyle.Width(min(base.WindowWidth-8, 54))
+	base.Header = base.Header.Width(base.WindowWidth)
+	base.Footer = base.Footer.Width(base.WindowWidth - 32)
+	base.Content = base.Content.Width(base.WindowWidth).
+		Height(base.WindowHeight - 2)
+	base.FormStyle = base.FormStyle.Width(min(base.WindowWidth-8, 54))
 
-	return MainFrame.Render(fmt.Sprintf(
+	return base.MainFrame.Render(fmt.Sprintf(
 		"%s\n%s\n%s",
-		Header.Render("GoneBuilder"),
-		Content.Render(FormStyle.Render(ms.form.WithHeight(10).View())),
+		base.Header.Render("GoneBuilder"),
+		base.Content.Render(
+			base.FormStyle.Render(ms.form.WithHeight(10).View()),
+		),
 		lipgloss.JoinHorizontal(
 			lipgloss.Top,
-			Footer.Render(
+			base.Footer.Render(
 				fmt.Sprintf("%s%s%s%s",
-					FooterTitle.Render("Exit"),
-					FooterText.Render("Ctrl+C"),
-					FooterTitle.Render(t.Translate("让我们说中文")),
-					FooterText.Render("Ctrl+L"),
+					base.FooterTitle.Render("Exit"),
+					base.FooterText.Render("Ctrl+C"),
+					base.FooterTitle.Render(t.Translate("让我们说中文")),
+					base.FooterText.Render("Ctrl+L"),
 				),
 			),
-			FooterCopyright.Render("Copyright © 2024 gonebot-dev"),
+			base.FooterCopyright.Render("Copyright © 2024 gonebot-dev"),
 		),
 	))
 }

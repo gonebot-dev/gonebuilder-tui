@@ -13,15 +13,17 @@ type TreeResponse struct {
 }
 
 type PluginInfo struct {
-	Name        string `json:"name"`
-	Plugin      string `json:"plugin"`
-	Description string `json:"description"`
-	Package     string `json:"package"`
+	Name          string `json:"name"`
+	Plugin        string `json:"plugin"`
+	Description   string `json:"description"`
+	DescriptionZH string `json:"description_zh"`
+	Package       string `json:"package"`
 }
 
 type AdapterInfo struct {
-	Name        string `json:"name"`
-	Adapter     string `json:"adapter"`
-	Description string `json:"description"`
-	Package     string `json:"Package"`
+	Name          string `json:"name"`
+	Adapter       string `json:"adapter"`
+	Description   string `json:"description"`
+	DescriptionZH string `json:"description_zh"`
+	Package       string `json:"Package"`
 }

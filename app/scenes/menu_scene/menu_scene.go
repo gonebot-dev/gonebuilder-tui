@@ -21,6 +21,10 @@ func (ms menuScene) Name() string {
 	return "MenuScene"
 }
 
+func (ms menuScene) GetEmits() map[string]string {
+	return map[string]string{}
+}
+
 func (ms menuScene) Init() tea.Cmd {
 	return ms.form.Init()
 }

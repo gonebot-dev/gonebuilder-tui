@@ -34,6 +34,10 @@ func (is initialScene) Name() string {
 	return "InitialScene"
 }
 
+func (is initialScene) GetEmits() map[string]string {
+	return map[string]string{}
+}
+
 type tickMsg struct{}
 
 func (is initialScene) Tick(interval time.Duration) tea.Cmd {

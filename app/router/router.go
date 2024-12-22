@@ -6,6 +6,7 @@ import tea "github.com/charmbracelet/bubbletea"
 type Scene interface {
 	tea.Model
 	Name() string
+	GetEmits() map[string]string
 }
 
 var scenes = make(map[string]tea.Model)

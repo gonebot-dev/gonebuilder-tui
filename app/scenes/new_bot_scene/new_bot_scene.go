@@ -18,6 +18,15 @@ type newBotScene struct {
 	currentForm **huh.Form
 	form        *huh.Form
 	filepicker  *huh.FilePicker
+	emits       map[string]string
+}
+
+func Name() string {
+	return "NewBotScene"
+}
+
+func (s newBotScene) GetEmits() map[string]string {
+	return s.emits
 }
 
 func (s newBotScene) Init() tea.Cmd {
@@ -84,7 +93,9 @@ func (s newBotScene) View() string {
 	))
 }
 
-var NewBotScene = newBotScene{}
+var NewBotScene = newBotScene{
+	emits: make(map[string]string),
+}
 
 func init() {
 	currentDir, _ := os.Getwd()

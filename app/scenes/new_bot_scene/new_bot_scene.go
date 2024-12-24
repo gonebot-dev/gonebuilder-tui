@@ -39,7 +39,7 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.Type {
 		case tea.KeyCtrlC:
 			return s, tea.Quit
-		case tea.KeyCtrlL:
+		case tea.KeyCtrlD:
 			if base.Lang == "en" {
 				base.Lang = "zh"
 				s.filepicker.Title(t.Translate("Select a folder...")).
@@ -85,7 +85,7 @@ func (s newBotScene) View() string {
 					base.FooterTitle.Render("Exit"),
 					base.FooterText.Render("Ctrl+C"),
 					base.FooterTitle.Render(t.Translate("让我们说中文")),
-					base.FooterText.Render("Ctrl+L"),
+					base.FooterText.Render("Ctrl+D"),
 				),
 			),
 			base.FooterCopyright.Render("Copyright © 2024 gonebot-dev"),

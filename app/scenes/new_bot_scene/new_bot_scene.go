@@ -23,12 +23,8 @@ func (s newBotScene) Name() string {
 	return "NewBotScene"
 }
 
-func (s newBotScene) GetEmits() map[string]string {
-	return s.emits
-}
-
 func (s newBotScene) Init() tea.Cmd {
-	return tea.Batch(s.form.Init())
+	return s.form.Init()
 }
 
 func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -60,12 +56,12 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	if s.form.State == huh.StateCompleted {
-		s.emits["bot_name"] = s.form.GetString("name")
-		s.emits["bot_version"] = s.form.GetString("version")
-		s.emits["bot_description"] = s.form.GetString("description")
-		s.emits["bot_folder"] = s.form.GetString("folder")
+		base.BotName = s.form.GetString("name")
+		base.BotVersion = s.form.GetString("version")
+		base.BotDesc = s.form.GetString("description")
+		base.BotFolder = s.form.GetString("folder")
 
-		return router.GetScene("SelectAdaptersScene")
+		cmds = append(cmds, router.NextScene("SelectAdaptersScene"))
 	}
 
 	return s, tea.Batch(cmds...)

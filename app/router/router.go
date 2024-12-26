@@ -1,30 +1,41 @@
 // Register all scenes here.
 package router
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 type Scene interface {
 	tea.Model
 	Name() string
-	GetEmits() map[string]string
+}
+
+type SwitchSceneMsg struct {
+	Next string
+}
+
+func NextScene(name string) tea.Cmd {
+	return func() tea.Msg {
+		return SwitchSceneMsg{
+			Next: name,
+		}
+	}
+}
+
+type EchoMsg struct{}
+
+var EchoTick = func() tea.Msg {
+	return EchoMsg{}
 }
 
 var scenes = make(map[string]tea.Model)
 
-func Init() tea.Cmd {
-	cmds := make([]tea.Cmd, len(scenes))
-	for _, scene := range scenes {
-		cmds = append(cmds, scene.Init())
-	}
-	return tea.Batch(cmds...)
+func Init(name string) tea.Cmd {
+	return scenes[name].Init()
 }
 
 func RegisterScene(scene Scene) {
 	scenes[scene.Name()] = scene
-}
-
-func GetScene(name string) (Scene, tea.Cmd) {
-	return scenes[name].(Scene), scenes[name].Init()
 }
 
 func Update(name string, msg tea.Msg) (next string, cmd tea.Cmd) {

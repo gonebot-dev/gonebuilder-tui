@@ -19,10 +19,15 @@ type App struct {
 }
 
 func (app App) Init() tea.Cmd {
-	return router.Init()
+	return router.Init(app.CurrentScene)
 }
 
 func (app App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case router.SwitchSceneMsg:
+		app.CurrentScene = msg.Next
+		return app, tea.Batch(router.Init(app.CurrentScene), router.EchoTick)
+	}
 	var cmd tea.Cmd
 	app.CurrentScene, cmd = router.Update(app.CurrentScene, msg)
 	return app, cmd

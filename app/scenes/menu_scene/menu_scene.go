@@ -21,10 +21,6 @@ func (ms menuScene) Name() string {
 	return "MenuScene"
 }
 
-func (ms menuScene) GetEmits() map[string]string {
-	return map[string]string{}
-}
-
 func (ms menuScene) Init() tea.Cmd {
 	return ms.form.Init()
 }
@@ -60,8 +56,8 @@ func (ms menuScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return ms, tea.Quit
 		}
 		// TODO: Add jump scenes
-		if ms.form.GetInt("action") == base.NewBot {
-			return router.GetScene("NewBotScene")
+		if base.SelectedAction == base.NewBot {
+			cmds = append(cmds, router.NextScene("NewBotScene"))
 		}
 	}
 

@@ -87,10 +87,10 @@ func (s SelectedListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (s SelectedListModel) View() string {
-	s.AdaptersList.SetSize((base.WindowWidth-10)/2, (base.WindowHeight-14)/3)
-	s.PluginsList.SetSize((base.WindowWidth-10)/2, (base.WindowHeight-14)/3*2)
-	return base.FormStyle.Width((base.WindowWidth - 8) / 2).
-		Height(base.WindowHeight - 10).
+	s.AdaptersList.SetSize(base.WindowWidth-8-(base.WindowWidth-8)/3*2, base.WindowHeight-14-(base.WindowHeight-14)/3*2)
+	s.PluginsList.SetSize(base.WindowWidth-8-(base.WindowWidth-8)/3*2, (base.WindowHeight-14)/3*2)
+	return base.FormStyle.Width(base.WindowWidth - 8 - (base.WindowWidth-8)/3*2).
+		Height(base.WindowHeight - 8).
 		Render(
 			fmt.Sprintf(
 				"%s\n\n%s",

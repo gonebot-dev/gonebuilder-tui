@@ -34,10 +34,6 @@ func (is initialScene) Name() string {
 	return "InitialScene"
 }
 
-func (is initialScene) GetEmits() map[string]string {
-	return map[string]string{}
-}
-
 type tickMsg struct{}
 
 func (is initialScene) Tick(interval time.Duration) tea.Cmd {
@@ -65,7 +61,7 @@ func (is initialScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if os.Getenv("DEBUG") == "true" {
 				return is, tea.Quit
 			} else {
-				return router.GetScene("MenuScene")
+				return is, router.NextScene("MenuScene")
 			}
 		}
 		is.loadingElapsed += is.options.tickInterval

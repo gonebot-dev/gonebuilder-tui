@@ -24,24 +24,19 @@ func (s selectPluginsScene) Name() string {
 	return "SelectPluginsScene"
 }
 
-func (s selectPluginsScene) GetEmits() map[string]string {
-	return map[string]string{}
-}
-
 func (s selectPluginsScene) Init() tea.Cmd {
 	return nil
 }
 
-var syncing = true
-
 func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
-	if api.Finished == true && api.CurrentCommit.SHA == "" {
+	if api.Finished && api.CurrentCommit.SHA == "" {
 		cmds = append(cmds, s.plugins.ToggleSpinner())
+		api.Finished = false
 		go api.SyncRepo()
 	}
-	if syncing == true && api.Finished == true && api.CurrentCommit.SHA != "" {
-		syncing = false
+	if base.RepoSyncing && api.Finished && api.CurrentCommit.SHA != "" {
+		base.RepoSyncing = false
 		s.plugins.SetItems(api.Plugins)
 		cmds = append(cmds, s.plugins.ToggleSpinner())
 	}
@@ -58,7 +53,7 @@ func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case tea.KeyCtrlR:
 			if api.Finished {
-				syncing = true
+				base.RepoSyncing = true
 				api.CurrentCommit.SHA = ""
 				cmds = append(cmds, s.plugins.ToggleSpinner())
 				go api.SyncRepo()
@@ -108,7 +103,7 @@ func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				selectedlist.SelectedList.PluginsList.RemoveItem(index)
 			}
 		case tea.KeyCtrlLeft:
-			return router.GetScene("SelectAdaptersScene")
+			cmds = append(cmds, router.NextScene("SelectAdaptersScene"))
 		case tea.KeyCtrlRight:
 			// TODO: Jump to the next scene
 		}
@@ -116,7 +111,7 @@ func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		base.WindowHeight = msg.Height
 		base.WindowWidth = msg.Width
 	}
-	if syncing {
+	if base.RepoSyncing {
 		s.plugins.Title = t.Translate("Syncing Repository...")
 	} else {
 		s.plugins.Title = t.Translate("Select Plugins...")
@@ -137,17 +132,16 @@ func (s selectPluginsScene) View() string {
 	base.Footer = base.Footer.Width(base.WindowWidth)
 	base.Content = base.Content.Width(base.WindowWidth).
 		Height(base.WindowHeight - 6).AlignHorizontal(lipgloss.Left)
-	s.plugins.SetSize((base.WindowWidth-8)/2, base.WindowHeight-10)
+	s.plugins.SetSize((base.WindowWidth-8)/3*2, base.WindowHeight-14)
 
 	return base.MainFrame.Render(fmt.Sprintf(
-		"%s\n\n%s\n\n%s",
+		"%s\n\n\n%s\n\n\n%s",
 		base.Header.Render("GoneBuilder - Copyright © 2024 gonebot-dev"),
 		base.Content.Render(
 			lipgloss.JoinHorizontal(
 				lipgloss.Top,
-				base.BasicStyle.Width((base.WindowWidth-4)/2).
+				base.FormStyle.Width((base.WindowWidth-4)/3*2).
 					Height(base.WindowHeight-8).
-					PaddingRight(2).PaddingTop(1).
 					Render(s.plugins.View()),
 				selectedlist.SelectedList.View(),
 			),

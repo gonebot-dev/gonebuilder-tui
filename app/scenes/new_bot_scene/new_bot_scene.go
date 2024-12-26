@@ -7,7 +7,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/gonebot-dev/gonebuilder-tui/app/base"
 	"github.com/gonebot-dev/gonebuilder-tui/app/router"
 	t "github.com/gonebot-dev/gonebuilder-tui/app/utils/translator"
@@ -74,28 +73,24 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (s newBotScene) View() string {
 	base.Header = base.Header.Width(base.WindowWidth)
-	base.Footer = base.Footer.Width(base.WindowWidth - 32)
+	base.Footer = base.Footer.Width(base.WindowWidth)
 	base.Content = base.Content.Width(base.WindowWidth).
 		Height(base.WindowHeight - 2)
 	base.FormStyle = base.FormStyle.Width(min(base.WindowWidth-8, 60))
 
 	return base.MainFrame.Render(fmt.Sprintf(
 		"%s\n%s\n%s",
-		base.Header.Render("GoneBuilder"),
+		base.Header.Render("GoneBuilder - Copyright © 2024 gonebot-dev"),
 		base.Content.Render(
 			base.FormStyle.Render(s.form.WithHeight(16).View()),
 		),
-		lipgloss.JoinHorizontal(
-			lipgloss.Top,
-			base.Footer.Render(
-				fmt.Sprintf("%s%s%s%s",
-					base.FooterTitle.Render(t.Translate("Exit")),
-					base.FooterText.Render("Ctrl+C"),
-					base.FooterTitle.Render(t.Translate("让我们说中文")),
-					base.FooterText.Render("Ctrl+D"),
-				),
+		base.Footer.Render(
+			fmt.Sprintf("%s%s%s%s",
+				base.FooterTitle.Render(t.Translate("Exit")),
+				base.FooterText.Render("Ctrl+C"),
+				base.FooterTitle.Render(t.Translate("让我们说中文")),
+				base.FooterText.Render("Ctrl+D"),
 			),
-			base.FooterCopyright.Render("Copyright © 2024 gonebot-dev"),
 		),
 	))
 }

@@ -1,4 +1,4 @@
-package selectadaptersscene
+package selectpluginsscene
 
 import (
 	"fmt"
@@ -15,35 +15,35 @@ import (
 	t "github.com/gonebot-dev/gonebuilder-tui/app/utils/translator"
 )
 
-type selectAdaptersScene struct {
+type selectPluginsScene struct {
 	router.Scene
-	adapters list.Model
+	plugins list.Model
 }
 
-func (s selectAdaptersScene) Name() string {
-	return "SelectAdaptersScene"
+func (s selectPluginsScene) Name() string {
+	return "SelectPluginsScene"
 }
 
-func (s selectAdaptersScene) GetEmits() map[string]string {
+func (s selectPluginsScene) GetEmits() map[string]string {
 	return map[string]string{}
 }
 
-func (s selectAdaptersScene) Init() tea.Cmd {
+func (s selectPluginsScene) Init() tea.Cmd {
 	return nil
 }
 
 var syncing = true
 
-func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 	if api.Finished == true && api.CurrentCommit.SHA == "" {
-		cmds = append(cmds, s.adapters.ToggleSpinner())
+		cmds = append(cmds, s.plugins.ToggleSpinner())
 		go api.SyncRepo()
 	}
 	if syncing == true && api.Finished == true && api.CurrentCommit.SHA != "" {
 		syncing = false
-		s.adapters.SetItems(api.Adapters)
-		cmds = append(cmds, s.adapters.ToggleSpinner())
+		s.plugins.SetItems(api.Plugins)
+		cmds = append(cmds, s.plugins.ToggleSpinner())
 	}
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -60,7 +60,7 @@ func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if api.Finished {
 				syncing = true
 				api.CurrentCommit.SHA = ""
-				cmds = append(cmds, s.adapters.ToggleSpinner())
+				cmds = append(cmds, s.plugins.ToggleSpinner())
 				go api.SyncRepo()
 				selectedlist.SelectedList.SelectedAdapters = make([]list.Item, 0)
 				selectedlist.SelectedList.SelectedPlugins = make([]list.Item, 0)
@@ -85,43 +85,45 @@ func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				selectedlist.SelectedList.Focus = "none"
 			}
 		case tea.KeyEnter:
-			if selectedlist.SelectedList.Focus == "none" && len(s.adapters.Items()) > 0 {
-				cmds = append(cmds, selectedlist.SelectedList.AdaptersList.InsertItem(
-					len(selectedlist.SelectedList.AdaptersList.Items()),
-					s.adapters.SelectedItem(),
+			if selectedlist.SelectedList.Focus == "none" && len(s.plugins.Items()) > 0 {
+				cmds = append(cmds, selectedlist.SelectedList.PluginsList.InsertItem(
+					len(selectedlist.SelectedList.PluginsList.Items()),
+					s.plugins.SelectedItem(),
 				))
-				selectedlist.SelectedList.SelectedAdapters = append(
-					selectedlist.SelectedList.SelectedAdapters,
-					s.adapters.SelectedItem(),
+				selectedlist.SelectedList.SelectedPlugins = append(
+					selectedlist.SelectedList.SelectedPlugins,
+					s.plugins.SelectedItem(),
 				)
-				s.adapters.RemoveItem(s.adapters.Index())
-			} else if selectedlist.SelectedList.Focus == "adapters" && len(selectedlist.SelectedList.SelectedAdapters) > 0 {
-				cmds = append(cmds, s.adapters.InsertItem(
-					s.adapters.Index(),
-					selectedlist.SelectedList.AdaptersList.SelectedItem(),
+				s.plugins.RemoveItem(s.plugins.Index())
+			} else if selectedlist.SelectedList.Focus == "plugins" && len(selectedlist.SelectedList.SelectedPlugins) > 0 {
+				cmds = append(cmds, s.plugins.InsertItem(
+					s.plugins.Index(),
+					selectedlist.SelectedList.PluginsList.SelectedItem(),
 				))
-				index := selectedlist.SelectedList.AdaptersList.Index()
-				selectedlist.SelectedList.SelectedAdapters = append(
-					selectedlist.SelectedList.SelectedAdapters[:index],
-					selectedlist.SelectedList.SelectedAdapters[index+1:]...,
+				index := selectedlist.SelectedList.PluginsList.Index()
+				selectedlist.SelectedList.SelectedPlugins = append(
+					selectedlist.SelectedList.SelectedPlugins[:index],
+					selectedlist.SelectedList.SelectedPlugins[index+1:]...,
 				)
-				selectedlist.SelectedList.AdaptersList.RemoveItem(index)
+				selectedlist.SelectedList.PluginsList.RemoveItem(index)
 			}
+		case tea.KeyCtrlLeft:
+			return router.GetScene("SelectAdaptersScene")
 		case tea.KeyCtrlRight:
-			return router.GetScene("SelectPluginsScene")
+			// TODO: Jump to the next scene
 		}
 	case tea.WindowSizeMsg:
 		base.WindowHeight = msg.Height
 		base.WindowWidth = msg.Width
 	}
 	if syncing {
-		s.adapters.Title = t.Translate("Syncing Repository...")
+		s.plugins.Title = t.Translate("Syncing Repository...")
 	} else {
-		s.adapters.Title = t.Translate("Select Adapters...")
+		s.plugins.Title = t.Translate("Select Plugins...")
 	}
 	var cmd tea.Cmd
 	if selectedlist.SelectedList.Focus == "none" {
-		s.adapters, cmd = s.adapters.Update(msg)
+		s.plugins, cmd = s.plugins.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 	model, cmd := selectedlist.SelectedList.Update(msg)
@@ -130,12 +132,12 @@ func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return s, tea.Batch(cmds...)
 }
 
-func (s selectAdaptersScene) View() string {
+func (s selectPluginsScene) View() string {
 	base.Header = base.Header.Width(base.WindowWidth)
 	base.Footer = base.Footer.Width(base.WindowWidth)
 	base.Content = base.Content.Width(base.WindowWidth).
 		Height(base.WindowHeight - 6).AlignHorizontal(lipgloss.Left)
-	s.adapters.SetSize((base.WindowWidth-8)/2, base.WindowHeight-10)
+	s.plugins.SetSize((base.WindowWidth-8)/2, base.WindowHeight-10)
 
 	return base.MainFrame.Render(fmt.Sprintf(
 		"%s\n\n%s\n\n%s",
@@ -146,7 +148,7 @@ func (s selectAdaptersScene) View() string {
 				base.BasicStyle.Width((base.WindowWidth-4)/2).
 					Height(base.WindowHeight-8).
 					PaddingRight(2).PaddingTop(1).
-					Render(s.adapters.View()),
+					Render(s.plugins.View()),
 				selectedlist.SelectedList.View(),
 			),
 		),
@@ -154,28 +156,28 @@ func (s selectAdaptersScene) View() string {
 			fmt.Sprintf("%s%s%s%s%s%s%s%s",
 				base.FooterTitle.Render(t.Translate("Exit")),
 				base.FooterText.Render("Ctrl+C"),
-				base.FooterTitle.Render(t.Translate("让我们说中文")),
-				base.FooterText.Render("Ctrl+D"),
 				base.FooterTitle.Render(t.Translate("Refresh")),
 				base.FooterText.Render("Ctrl+R"),
 				base.FooterTitle.Render(t.Translate("Next")),
 				base.FooterText.Render("Ctrl+Right"),
+				base.FooterTitle.Render(t.Translate("Prev")),
+				base.FooterText.Render("Ctrl+Left"),
 			),
 		),
 	))
 }
 
-var SelectAdaptersScene = selectAdaptersScene{
-	adapters: list.New([]list.Item{}, list.NewDefaultDelegate(), (base.WindowWidth-4)/2, base.WindowHeight-8),
+var SelectPluginsScene = selectPluginsScene{
+	plugins: list.New([]list.Item{}, list.NewDefaultDelegate(), (base.WindowWidth-4)/2, base.WindowHeight-8),
 }
 
 func init() {
-	SelectAdaptersScene.adapters.Title = t.Translate("Syncing Repository...")
-	SelectAdaptersScene.adapters.SetSpinner(spinner.Line)
-	SelectAdaptersScene.adapters.SetShowPagination(true)
-	SelectAdaptersScene.adapters.SetShowStatusBar(true)
+	SelectPluginsScene.plugins.Title = t.Translate("Syncing Repository...")
+	SelectPluginsScene.plugins.SetSpinner(spinner.Line)
+	SelectPluginsScene.plugins.SetShowPagination(true)
+	SelectPluginsScene.plugins.SetShowStatusBar(true)
 
-	SelectAdaptersScene.adapters.KeyMap.Quit = key.NewBinding(
+	SelectPluginsScene.plugins.KeyMap.Quit = key.NewBinding(
 		key.WithKeys(tea.KeyCtrlC.String()),
 		key.WithHelp(tea.KeyTab.String(), "switch focus"),
 	)

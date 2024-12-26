@@ -23,6 +23,9 @@ func init() {
 	// ! Footer
 	translates["Exit"] = "退出"
 	translates["让我们说中文"] = "Let's speak English"
+	translates["Refresh"] = "刷新"
+	translates["Prev"] = "上一步"
+	translates["Next"] = "下一步"
 
 	// ! Menu Scene
 	translates["What can I do for you?"] = "宁需要我做什么？"
@@ -47,9 +50,11 @@ func init() {
 	// ! Select Adapters Scene
 	translates["Syncing Repository..."] = "正在同步仓库..."
 	translates["Select Adapters..."] = "选择适配器..."
-	translates["Refresh"] = "刷新"
 
 	// ! [Component]Selected List
 	translates["Selected Adapters"] = "已选择的适配器"
 	translates["Selected Plugins"] = "已选择的插件"
+
+	// ! Select Plugins Scene
+	translates["Select Plugins..."] = "选择插件..."
 }

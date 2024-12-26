@@ -12,7 +12,7 @@ var BasicTextStyle = BasicStyle.
 
 var (
 	Header = BasicStyle.Height(1).
-		Background(Colors.Gray).
+		Background(Colors.Yellow).
 		AlignHorizontal(lipgloss.Center).
 		Bold(true)
 	Footer = BasicStyle.Height(1).
@@ -29,7 +29,6 @@ var (
 			AlignHorizontal(lipgloss.Center).
 			AlignVertical(lipgloss.Center).
 			Bold(true)
-	FooterTitle     = BasicTextStyle.Background(Colors.Lavender)
-	FooterText      = BasicTextStyle.Background(Colors.Gray)
-	FooterCopyright = BasicTextStyle.Background(Colors.Yellow)
+	FooterTitle = BasicTextStyle.Background(Colors.Lavender)
+	FooterText  = BasicTextStyle.Background(Colors.Gray)
 )

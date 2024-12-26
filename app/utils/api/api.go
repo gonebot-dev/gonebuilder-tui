@@ -10,7 +10,12 @@ import (
 )
 
 func getLatestCommit() (commit CommitInfo, err error) {
-	resp, err := http.Get("https://api.github.com/repos/gonebot-dev/gonerepo/commits/main")
+	req, err := http.NewRequest("GET", "https://api.github.com/repos/gonebot-dev/gonerepo/commits/main", nil)
+	if err != nil {
+		return
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("token %s", "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"))
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
 	}
@@ -26,7 +31,12 @@ func getLatestCommit() (commit CommitInfo, err error) {
 }
 
 func getTree(commit CommitInfo) (files []FileInfo, err error) {
-	resp, err := http.Get(fmt.Sprintf("https://api.github.com/repos/gonebot-dev/gonerepo/git/trees/%s?recursive=true", commit.SHA))
+	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/gonebot-dev/gonerepo/git/trees/%s?recursive=true", commit.SHA), nil)
+	if err != nil {
+		return
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("token %s", "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"))
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
 	}
@@ -79,10 +89,15 @@ func SyncRepo() {
 		if strings.HasPrefix(file.Path, "packages/adapters") {
 			var adapter AdapterInfo
 			var resp *http.Response
-			resp, Err = http.Get(fmt.Sprintf(
+			req, Err := http.NewRequest("GET", fmt.Sprintf(
 				"https://github.com/gonebot-dev/gonerepo/raw/refs/heads/main/%s",
 				file.Path,
-			))
+			), nil)
+			if Err != nil {
+				return
+			}
+			req.Header.Add("Authorization", fmt.Sprintf("token %s", "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"))
+			resp, Err = http.DefaultClient.Do(req)
 			if Err != nil {
 				Finished = true
 				return
@@ -98,10 +113,15 @@ func SyncRepo() {
 		} else if strings.HasPrefix(file.Path, "packages/plugins") {
 			var plugin PluginInfo
 			var resp *http.Response
-			resp, Err = http.Get(fmt.Sprintf(
+			req, Err := http.NewRequest("GET", fmt.Sprintf(
 				"https://github.com/gonebot-dev/gonerepo/raw/refs/heads/main/%s",
 				file.Path,
-			))
+			), nil)
+			if Err != nil {
+				return
+			}
+			req.Header.Add("Authorization", fmt.Sprintf("token %s", "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"))
+			resp, Err = http.DefaultClient.Do(req)
 			if Err != nil {
 				Finished = true
 				return

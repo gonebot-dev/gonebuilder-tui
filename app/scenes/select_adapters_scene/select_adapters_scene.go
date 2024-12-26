@@ -50,7 +50,7 @@ func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.Type {
 		case tea.KeyCtrlC:
 			return s, tea.Quit
-		case tea.KeyCtrlD:
+		case tea.KeyCtrlF:
 			if base.Lang == "en" {
 				base.Lang = "zh"
 			} else {
@@ -155,7 +155,7 @@ func (s selectAdaptersScene) View() string {
 				base.FooterTitle.Render(t.Translate("Exit")),
 				base.FooterText.Render("Ctrl+C"),
 				base.FooterTitle.Render(t.Translate("让我们说中文")),
-				base.FooterText.Render("Ctrl+D"),
+				base.FooterText.Render("Ctrl+F"),
 				base.FooterTitle.Render(t.Translate("Refresh")),
 				base.FooterText.Render("Ctrl+R"),
 				base.FooterTitle.Render(t.Translate("Next")),

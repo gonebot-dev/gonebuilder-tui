@@ -50,7 +50,7 @@ func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.Type {
 		case tea.KeyCtrlC:
 			return s, tea.Quit
-		case tea.KeyCtrlD:
+		case tea.KeyCtrlF:
 			if base.Lang == "en" {
 				base.Lang = "zh"
 			} else {

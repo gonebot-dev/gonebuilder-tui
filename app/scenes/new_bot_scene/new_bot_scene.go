@@ -19,7 +19,7 @@ type newBotScene struct {
 	emits      map[string]string
 }
 
-func Name() string {
+func (s newBotScene) Name() string {
 	return "NewBotScene"
 }
 
@@ -37,7 +37,7 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.Type {
 		case tea.KeyCtrlC:
 			return s, tea.Quit
-		case tea.KeyCtrlD:
+		case tea.KeyCtrlF:
 			if base.Lang == "en" {
 				base.Lang = "zh"
 			} else {
@@ -89,7 +89,7 @@ func (s newBotScene) View() string {
 				base.FooterTitle.Render(t.Translate("Exit")),
 				base.FooterText.Render("Ctrl+C"),
 				base.FooterTitle.Render(t.Translate("让我们说中文")),
-				base.FooterText.Render("Ctrl+D"),
+				base.FooterText.Render("Ctrl+F"),
 			),
 		),
 	))

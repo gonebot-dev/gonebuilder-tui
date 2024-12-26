@@ -10,6 +10,8 @@ import (
 	initialscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/initial_scene"
 	menuscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/menu_scene"
 	newbotscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/new_bot_scene"
+	selectadaptersscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/select_adapters_scene"
+	selectpluginsscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/select_plugins_scene"
 )
 
 type App struct {
@@ -58,6 +60,8 @@ func init() {
 	router.RegisterScene(initialscene.InitialScene)
 	router.RegisterScene(menuscene.MenuScene)
 	router.RegisterScene(newbotscene.NewBotScene)
+	router.RegisterScene(selectadaptersscene.SelectAdaptersScene)
+	router.RegisterScene(selectpluginsscene.SelectPluginsScene)
 }
 
 func CreateApp() App {

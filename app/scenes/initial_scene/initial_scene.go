@@ -65,7 +65,7 @@ func (is initialScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if os.Getenv("DEBUG") == "true" {
 				return is, tea.Quit
 			} else {
-				return router.GetScene("MenuScene"), nil
+				return router.GetScene("MenuScene")
 			}
 		}
 		is.loadingElapsed += is.options.tickInterval

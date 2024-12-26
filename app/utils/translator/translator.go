@@ -1,6 +1,10 @@
 package translaltor
 
-import "github.com/gonebot-dev/gonebuilder-tui/app/base"
+import (
+	"fmt"
+
+	"github.com/gonebot-dev/gonebuilder-tui/app/base"
+)
 
 var translates = make(map[string]string)
 
@@ -10,13 +14,14 @@ func Translate(text string) string {
 	}
 	val, ok := translates[text]
 	if !ok {
-		panic("Translation not found!")
+		panic(fmt.Sprintf("Translation not found: %s!", text))
 	}
 	return val
 }
 
 func init() {
 	// ! Footer
+	translates["Exit"] = "退出"
 	translates["让我们说中文"] = "Let's speak English"
 
 	// ! Menu Scene
@@ -30,7 +35,6 @@ func init() {
 	translates["Exit the application."] = "退出应用程序"
 
 	// ! New Bot Scene
-	// * Group 1
 	translates["Enter bot name:"] = "输入 bot 名称："
 	translates["Name of your bot."] = "你的 bot 名称"
 	translates["Enter bot version:"] = "输入 bot 版本号："
@@ -39,4 +43,9 @@ func init() {
 	translates["A short description of your bot."] = "简短描述你的 bot"
 	translates["Select a folder..."] = "选择一个文件夹..."
 	translates["We will create your bot folder here."] = "我们将在这里创建你的 bot 文件夹"
+
+	// ! Select Adapters Scene
+	translates["Syncing Repository..."] = "正在同步仓库..."
+	translates["Select Adapters..."] = "选择适配器..."
+	translates["Refresh"] = "刷新"
 }

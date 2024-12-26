@@ -23,8 +23,8 @@ func RegisterScene(scene Scene) {
 	scenes[scene.Name()] = scene
 }
 
-func GetScene(name string) Scene {
-	return scenes[name].(Scene)
+func GetScene(name string) (Scene, tea.Cmd) {
+	return scenes[name].(Scene), scenes[name].Init()
 }
 
 func Update(name string, msg tea.Msg) (next string, cmd tea.Cmd) {

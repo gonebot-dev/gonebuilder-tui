@@ -9,7 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gonebot-dev/gonebuilder-tui/app/base"
 	"github.com/gonebot-dev/gonebuilder-tui/app/router"
-	t "github.com/gonebot-dev/gonebuilder-tui/app/translator"
+	t "github.com/gonebot-dev/gonebuilder-tui/app/utils/translator"
 )
 
 type menuScene struct {
@@ -60,6 +60,9 @@ func (ms menuScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return ms, tea.Quit
 		}
 		// TODO: Add jump scenes
+		if ms.form.GetInt("action") == base.NewBot {
+			return router.GetScene("NewBotScene")
+		}
 	}
 
 	return ms, tea.Batch(cmds...)
@@ -82,7 +85,7 @@ func (ms menuScene) View() string {
 			lipgloss.Top,
 			base.Footer.Render(
 				fmt.Sprintf("%s%s%s%s",
-					base.FooterTitle.Render("Exit"),
+					base.FooterTitle.Render(t.Translate("Exit")),
 					base.FooterText.Render("Ctrl+C"),
 					base.FooterTitle.Render(t.Translate("让我们说中文")),
 					base.FooterText.Render("Ctrl+D"),

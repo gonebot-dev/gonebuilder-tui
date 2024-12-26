@@ -2,34 +2,34 @@ package base
 
 import "github.com/charmbracelet/lipgloss"
 
-var basic = lipgloss.NewStyle().
+var BasicStyle = lipgloss.NewStyle().
 	AlignHorizontal(lipgloss.Left).
 	Foreground(Colors.PrimaryReverse)
-var basicText = basic.
+var BasicTextStyle = BasicStyle.
 	Foreground(Colors.PrimaryReverse).
 	Bold(true).
 	Padding(0, 2)
 
 var (
-	Header = basic.Height(1).
+	Header = BasicStyle.Height(1).
 		Background(Colors.Gray).
 		AlignHorizontal(lipgloss.Center).
 		Bold(true)
-	Footer = basic.Height(1).
+	Footer = BasicStyle.Height(1).
 		Background(Colors.Gray).
 		Bold(true)
-	Content = basic.
+	Content = BasicStyle.
 		AlignHorizontal(lipgloss.Center).
 		AlignVertical(lipgloss.Center)
 	FormStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(Colors.Lavender).
 			Padding(2, 4)
-	MainFrame = basic.
+	MainFrame = BasicStyle.
 			AlignHorizontal(lipgloss.Center).
 			AlignVertical(lipgloss.Center).
 			Bold(true)
-	FooterTitle     = basicText.Background(Colors.Lavender)
-	FooterText      = basicText.Background(Colors.Gray)
-	FooterCopyright = basicText.Background(Colors.Yellow)
+	FooterTitle     = BasicTextStyle.Background(Colors.Lavender)
+	FooterText      = BasicTextStyle.Background(Colors.Gray)
+	FooterCopyright = BasicTextStyle.Background(Colors.Yellow)
 )

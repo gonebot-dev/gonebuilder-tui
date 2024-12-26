@@ -10,15 +10,14 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gonebot-dev/gonebuilder-tui/app/base"
 	"github.com/gonebot-dev/gonebuilder-tui/app/router"
-	t "github.com/gonebot-dev/gonebuilder-tui/app/translator"
+	t "github.com/gonebot-dev/gonebuilder-tui/app/utils/translator"
 )
 
 type newBotScene struct {
 	router.Scene
-	currentForm **huh.Form
-	form        *huh.Form
-	filepicker  *huh.FilePicker
-	emits       map[string]string
+	form       *huh.Form
+	filepicker *huh.FilePicker
+	emits      map[string]string
 }
 
 func Name() string {
@@ -42,12 +41,8 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlD:
 			if base.Lang == "en" {
 				base.Lang = "zh"
-				s.filepicker.Title(t.Translate("Select a folder...")).
-					Description(t.Translate("We will create your bot folder here."))
 			} else {
 				base.Lang = "en"
-				s.filepicker.Title(t.Translate("Select a folder...")).
-					Description(t.Translate("We will create your bot folder here."))
 			}
 		}
 	case tea.WindowSizeMsg:
@@ -55,11 +50,23 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		base.WindowWidth = msg.Width
 	}
 
+	s.filepicker.Title(t.Translate("Select a folder...")).
+		Description(t.Translate("We will create your bot folder here."))
+
 	var cmds []tea.Cmd
-	form, cmd := (*s.currentForm).Update(msg)
+	form, cmd := s.form.Update(msg)
 	if f, ok := form.(*huh.Form); ok {
 		cmds = append(cmds, cmd)
-		(*s.currentForm) = f
+		s.form = f
+	}
+
+	if s.form.State == huh.StateCompleted {
+		s.emits["bot_name"] = s.form.GetString("name")
+		s.emits["bot_version"] = s.form.GetString("version")
+		s.emits["bot_description"] = s.form.GetString("description")
+		s.emits["bot_folder"] = s.form.GetString("folder")
+
+		return router.GetScene("SelectAdaptersScene")
 	}
 
 	return s, tea.Batch(cmds...)
@@ -76,13 +83,13 @@ func (s newBotScene) View() string {
 		"%s\n%s\n%s",
 		base.Header.Render("GoneBuilder"),
 		base.Content.Render(
-			base.FormStyle.Render((*s.currentForm).WithHeight(16).View()),
+			base.FormStyle.Render(s.form.WithHeight(16).View()),
 		),
 		lipgloss.JoinHorizontal(
 			lipgloss.Top,
 			base.Footer.Render(
 				fmt.Sprintf("%s%s%s%s",
-					base.FooterTitle.Render("Exit"),
+					base.FooterTitle.Render(t.Translate("Exit")),
 					base.FooterText.Render("Ctrl+C"),
 					base.FooterTitle.Render(t.Translate("让我们说中文")),
 					base.FooterText.Render("Ctrl+D"),
@@ -100,7 +107,7 @@ var NewBotScene = newBotScene{
 func init() {
 	currentDir, _ := os.Getwd()
 	NewBotScene.filepicker = huh.NewFilePicker().
-		Key("selectedFolder").
+		Key("folder").
 		Title(t.Translate("Select a folder...")).
 		Description(t.Translate("We will create your bot folder here.")).
 		DirAllowed(true).
@@ -127,7 +134,6 @@ func init() {
 			NewBotScene.filepicker,
 		),
 	)
-	NewBotScene.currentForm = &NewBotScene.form
 
 	// Fix filepicker keymap
 	keyMap := huh.NewDefaultKeyMap()

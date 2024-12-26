@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/charmbracelet/bubbles/list"
 )
 
 func getLatestCommit() (commit CommitInfo, err error) {
@@ -41,27 +43,33 @@ func getTree(commit CommitInfo) (files []FileInfo, err error) {
 	return
 }
 
-var Plugins = make([]PluginInfo, 0)
-var Adapters = make([]AdapterInfo, 0)
+var Plugins = make([]list.Item, 0)
+var Adapters = make([]list.Item, 0)
 
 // Which commit is currently being used
 var CurrentCommit = CommitInfo{SHA: ""}
+var Finished = true
+var Err error
 
-func SyncRepo() (err error) {
-	err = nil
-	Plugins = make([]PluginInfo, 0)
-	Adapters = make([]AdapterInfo, 0)
+func SyncRepo() {
+	Finished = false
+	Err = nil
+	Plugins = make([]list.Item, 0)
+	Adapters = make([]list.Item, 0)
 
-	latestCommit, err := getLatestCommit()
-	if err != nil {
+	latestCommit, Err := getLatestCommit()
+	if Err != nil {
+		Finished = true
 		return
 	}
 	if latestCommit.SHA == CurrentCommit.SHA {
+		Finished = true
 		return
 	}
 	CurrentCommit = latestCommit
-	files, err := getTree(latestCommit)
-	if err != nil {
+	files, Err := getTree(latestCommit)
+	if Err != nil {
+		Finished = true
 		return
 	}
 	for _, file := range files {
@@ -71,15 +79,17 @@ func SyncRepo() (err error) {
 		if strings.HasPrefix(file.Path, "packages/adapters") {
 			var adapter AdapterInfo
 			var resp *http.Response
-			resp, err = http.Get(fmt.Sprintf(
+			resp, Err = http.Get(fmt.Sprintf(
 				"https://github.com/gonebot-dev/gonerepo/raw/refs/heads/main/%s",
 				file.Path,
 			))
-			if err != nil {
+			if Err != nil {
+				Finished = true
 				return
 			}
 			defer resp.Body.Close()
-			if err = json.NewDecoder(resp.Body).Decode(&adapter); err != nil {
+			if Err = json.NewDecoder(resp.Body).Decode(&adapter); Err != nil {
+				Finished = true
 				return
 			}
 			pieces := strings.Split(strings.TrimSuffix(file.Path, ".json"), "/")
@@ -88,15 +98,17 @@ func SyncRepo() (err error) {
 		} else if strings.HasPrefix(file.Path, "packages/plugins") {
 			var plugin PluginInfo
 			var resp *http.Response
-			resp, err = http.Get(fmt.Sprintf(
+			resp, Err = http.Get(fmt.Sprintf(
 				"https://github.com/gonebot-dev/gonerepo/raw/refs/heads/main/%s",
 				file.Path,
 			))
-			if err != nil {
+			if Err != nil {
+				Finished = true
 				return
 			}
 			defer resp.Body.Close()
-			if err = json.NewDecoder(resp.Body).Decode(&plugin); err != nil {
+			if Err = json.NewDecoder(resp.Body).Decode(&plugin); Err != nil {
+				Finished = true
 				return
 			}
 			pieces := strings.Split(strings.TrimSuffix(file.Path, ".json"), "/")
@@ -104,5 +116,6 @@ func SyncRepo() (err error) {
 			Plugins = append(Plugins, plugin)
 		}
 	}
+	Finished = true
 	return
 }

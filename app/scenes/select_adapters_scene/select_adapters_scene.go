@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gonebot-dev/gonebuilder-tui/app/base"
+	selectedlist "github.com/gonebot-dev/gonebuilder-tui/app/components/selected_list"
 	"github.com/gonebot-dev/gonebuilder-tui/app/router"
 	"github.com/gonebot-dev/gonebuilder-tui/app/utils/api"
 	t "github.com/gonebot-dev/gonebuilder-tui/app/utils/translator"
@@ -61,6 +62,48 @@ func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				api.CurrentCommit.SHA = ""
 				cmds = append(cmds, s.adapters.ToggleSpinner())
 			}
+		case tea.KeyTab:
+			switch selectedlist.SelectedList.Focus {
+			case "none":
+				if len(selectedlist.SelectedList.SelectedAdapters) > 0 {
+					selectedlist.SelectedList.Focus = "adapters"
+				} else if len(selectedlist.SelectedList.SelectedPlugins) > 0 {
+					selectedlist.SelectedList.Focus = "plugins"
+				}
+			case "adapters":
+				if len(selectedlist.SelectedList.PluginsList.Items()) > 0 {
+					selectedlist.SelectedList.Focus = "plugins"
+				} else {
+					selectedlist.SelectedList.Focus = "none"
+				}
+			case "plugins":
+				selectedlist.SelectedList.Focus = "none"
+			}
+		case tea.KeyEnter:
+			if selectedlist.SelectedList.Focus == "none" {
+				cmds = append(cmds, selectedlist.SelectedList.AdaptersList.InsertItem(
+					len(selectedlist.SelectedList.AdaptersList.Items()),
+					s.adapters.SelectedItem(),
+				))
+				selectedlist.SelectedList.AdaptersList.ResetSelected()
+				selectedlist.SelectedList.SelectedAdapters = append(
+					selectedlist.SelectedList.SelectedAdapters,
+					s.adapters.SelectedItem(),
+				)
+				s.adapters.RemoveItem(s.adapters.Index())
+			} else if selectedlist.SelectedList.Focus == "adapters" {
+				s.adapters.ResetSelected()
+				cmds = append(cmds, s.adapters.InsertItem(
+					s.adapters.Index(),
+					selectedlist.SelectedList.AdaptersList.SelectedItem(),
+				))
+				index := selectedlist.SelectedList.AdaptersList.Index()
+				selectedlist.SelectedList.SelectedAdapters = append(
+					selectedlist.SelectedList.SelectedAdapters[:index],
+					selectedlist.SelectedList.SelectedAdapters[index+1:]...,
+				)
+				selectedlist.SelectedList.AdaptersList.RemoveItem(index)
+			}
 		}
 	case tea.WindowSizeMsg:
 		base.WindowHeight = msg.Height
@@ -72,7 +115,12 @@ func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		s.adapters.Title = t.Translate("Select Adapters...")
 	}
 	var cmd tea.Cmd
-	s.adapters, cmd = s.adapters.Update(msg)
+	if selectedlist.SelectedList.Focus == "none" {
+		s.adapters, cmd = s.adapters.Update(msg)
+		cmds = append(cmds, cmd)
+	}
+	model, cmd := selectedlist.SelectedList.Update(msg)
+	selectedlist.SelectedList = model.(selectedlist.SelectedListModel)
 	cmds = append(cmds, cmd)
 	return s, tea.Batch(cmds...)
 }
@@ -96,7 +144,7 @@ func (s selectAdaptersScene) View() string {
 					Height(base.WindowHeight-8).
 					PaddingRight(2).PaddingTop(1).
 					Render(s.adapters.View()),
-				base.FormStyle.Render(""),
+				selectedlist.SelectedList.View(),
 			),
 		),
 		lipgloss.JoinHorizontal(
@@ -126,5 +174,8 @@ func init() {
 	SelectAdaptersScene.adapters.SetShowPagination(true)
 	SelectAdaptersScene.adapters.SetShowStatusBar(true)
 
-	SelectAdaptersScene.adapters.KeyMap.Quit = key.NewBinding(key.WithDisabled())
+	SelectAdaptersScene.adapters.KeyMap.Quit = key.NewBinding(
+		key.WithKeys(tea.KeyCtrlC.String()),
+		key.WithHelp(tea.KeyTab.String(), "switch focus"),
+	)
 }

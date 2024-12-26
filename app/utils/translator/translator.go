@@ -48,4 +48,8 @@ func init() {
 	translates["Syncing Repository..."] = "正在同步仓库..."
 	translates["Select Adapters..."] = "选择适配器..."
 	translates["Refresh"] = "刷新"
+
+	// ! [Component]Selected List
+	translates["Selected Adapters"] = "已选择的适配器"
+	translates["Selected Plugins"] = "已选择的插件"
 }

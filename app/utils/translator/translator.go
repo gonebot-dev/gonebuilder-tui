@@ -33,8 +33,8 @@ func init() {
 	translates["Create a new gonebot."] = "创建一个新的 gonebot"
 	translates["Modify an existing gonebot."] = "修改现有的 gonebot"
 	translates["Manage .env configurations."] = "管理 .env 配置"
-	translates["Explore plugin repository."] = "探索插件仓库"
-	translates["Explore adapter repository."] = "探索适配器仓库"
+	translates["Explore plugin repository.(Desktop required)"] = "探索插件仓库（需要桌面环境）"
+	translates["Explore adapter repository.(Desktop required)"] = "探索适配器仓库（需要桌面环境）"
 	translates["Exit the application."] = "退出应用程序"
 
 	// ! New Bot Scene

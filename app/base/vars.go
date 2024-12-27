@@ -18,8 +18,9 @@ var (
 	Lang           string = "en"
 	SelectedAction        = -1
 	RepoSyncing           = true
-	BotName        string
-	BotVersion     string
-	BotDesc        string
-	BotFolder      string
+
+	BotName    string
+	BotVersion string
+	BotDesc    string
+	BotFolder  string
 )

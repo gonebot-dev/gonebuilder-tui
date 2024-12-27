@@ -81,11 +81,7 @@ func (ms menuScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlC:
 			return ms, tea.Quit
 		case tea.KeyCtrlF:
-			if base.Lang == "en" {
-				base.Lang = "zh"
-			} else {
-				base.Lang = "en"
-			}
+			base.Lang = base.IfElse(base.Lang == "en", "zh", "en")
 		}
 	case tea.WindowSizeMsg:
 		base.WindowHeight = msg.Height

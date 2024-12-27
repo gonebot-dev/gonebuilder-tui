@@ -22,6 +22,7 @@ var (
 		AlignHorizontal(lipgloss.Center).
 		AlignVertical(lipgloss.Center)
 	FormStyle = lipgloss.NewStyle().
+			AlignHorizontal(lipgloss.Left).
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(Colors.Lavender).
 			Padding(2, 4)

@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 )
 
 func getLatestCommit() (commit CommitInfo, err error) {
-	req, err := http.NewRequest("GET", "https://api.github.com/repos/gonebot-dev/gonerepo/commits/main", nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/commits/main", os.Getenv("GONEREPO")), nil)
 	if err != nil {
 		return
 	}
@@ -21,7 +22,7 @@ func getLatestCommit() (commit CommitInfo, err error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		err = fmt.Errorf("Failed to get latest commit: %s", resp.Status)
+		err = fmt.Errorf("failed to get latest commit: %s", resp.Status)
 		return
 	}
 	if err = json.NewDecoder(resp.Body).Decode(&commit); err != nil {
@@ -31,7 +32,7 @@ func getLatestCommit() (commit CommitInfo, err error) {
 }
 
 func getTree(commit CommitInfo) (files []FileInfo, err error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/gonebot-dev/gonerepo/git/trees/%s?recursive=true", commit.SHA), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/git/trees/%s?recursive=true", os.Getenv("GONEREPO"), commit.SHA), nil)
 	if err != nil {
 		return
 	}
@@ -42,7 +43,7 @@ func getTree(commit CommitInfo) (files []FileInfo, err error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		err = fmt.Errorf("Failed to get tree: %s", resp.Status)
+		err = fmt.Errorf("failed to get tree: %s", resp.Status)
 		return
 	}
 	var treeResp TreeResponse
@@ -90,7 +91,8 @@ func SyncRepo() {
 			var adapter AdapterInfo
 			var resp *http.Response
 			req, Err := http.NewRequest("GET", fmt.Sprintf(
-				"https://github.com/gonebot-dev/gonerepo/raw/refs/heads/main/%s",
+				"https://github.com/%s/raw/refs/heads/main/%s",
+				os.Getenv("GONEREPO"),
 				file.Path,
 			), nil)
 			if Err != nil {
@@ -114,7 +116,8 @@ func SyncRepo() {
 			var plugin PluginInfo
 			var resp *http.Response
 			req, Err := http.NewRequest("GET", fmt.Sprintf(
-				"https://github.com/gonebot-dev/gonerepo/raw/refs/heads/main/%s",
+				"https://github.com/%s/raw/refs/heads/main/%s",
+				os.Getenv("GONEREPO"),
 				file.Path,
 			), nil)
 			if Err != nil {
@@ -137,5 +140,4 @@ func SyncRepo() {
 		}
 	}
 	Finished = true
-	return
 }

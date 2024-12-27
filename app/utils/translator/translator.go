@@ -57,4 +57,10 @@ func init() {
 
 	// ! Select Plugins Scene
 	translates["Select Plugins..."] = "选择插件..."
+
+	// ! Create Bot Scene
+	translates["Are you sure to create bot with these components?"] = "宁确定要使用这些组件创建 bot 吗？"
+	translates["This will create or replace a folder in selected folder."] = "这将在宁选择的文件夹中创建或覆盖一个文件夹。"
+	translates["Affirmative!"] = "是！哥们！"
+	translates["Negative."] = "不是，哥们。"
 }

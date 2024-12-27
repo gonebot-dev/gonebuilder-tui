@@ -53,13 +53,13 @@ var Colors = struct {
 	},
 	Yellow: lipgloss.CompleteAdaptiveColor{
 		Light: lipgloss.CompleteColor{
-			ANSI:      "3",
-			ANSI256:   "226",
+			ANSI:      "11",
+			ANSI256:   "220",
 			TrueColor: "#e6a23c",
 		},
 		Dark: lipgloss.CompleteColor{
-			ANSI:      "11",
-			ANSI256:   "220",
+			ANSI:      "3",
+			ANSI256:   "226",
 			TrueColor: "#e6a23c",
 		},
 	},

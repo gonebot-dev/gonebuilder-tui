@@ -3,6 +3,8 @@ package newbotscene
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -34,11 +36,7 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlC:
 			return s, tea.Quit
 		case tea.KeyCtrlF:
-			if base.Lang == "en" {
-				base.Lang = "zh"
-			} else {
-				base.Lang = "en"
-			}
+			base.Lang = base.IfElse(base.Lang == "en", "zh", "en")
 		}
 	case tea.WindowSizeMsg:
 		base.WindowHeight = msg.Height
@@ -59,7 +57,7 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		base.BotName = s.form.GetString("name")
 		base.BotVersion = s.form.GetString("version")
 		base.BotDesc = s.form.GetString("description")
-		base.BotFolder = s.form.GetString("folder")
+		base.BotFolder = strings.ReplaceAll(filepath.Join(s.form.GetString("folder"), base.BotName), "\\", "/")
 
 		cmds = append(cmds, router.NextScene("SelectAdaptersScene"))
 	}

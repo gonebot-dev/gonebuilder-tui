@@ -46,11 +46,7 @@ func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlC:
 			return s, tea.Quit
 		case tea.KeyCtrlF:
-			if base.Lang == "en" {
-				base.Lang = "zh"
-			} else {
-				base.Lang = "en"
-			}
+			base.Lang = base.IfElse(base.Lang == "en", "zh", "en")
 		case tea.KeyCtrlR:
 			if api.Finished {
 				base.RepoSyncing = true
@@ -103,8 +99,10 @@ func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				selectedlist.SelectedList.PluginsList.RemoveItem(index)
 			}
 		case tea.KeyCtrlLeft:
+			selectedlist.SelectedList.Focus = "none"
 			cmds = append(cmds, router.NextScene("SelectAdaptersScene"))
 		case tea.KeyCtrlRight:
+			selectedlist.SelectedList.Focus = "none"
 			// TODO: Jump to the next scene
 		}
 	case tea.WindowSizeMsg:

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -57,7 +56,7 @@ func (s newBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		base.BotName = s.form.GetString("name")
 		base.BotVersion = s.form.GetString("version")
 		base.BotDesc = s.form.GetString("description")
-		base.BotFolder = strings.ReplaceAll(filepath.Join(s.form.GetString("folder"), base.BotName), "\\", "/")
+		base.BotFolder, _ = filepath.Abs(s.form.GetString("folder"))
 
 		cmds = append(cmds, router.NextScene("SelectAdaptersScene"))
 	}

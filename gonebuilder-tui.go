@@ -11,10 +11,7 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env file")
-	}
+	godotenv.Load()
 	if os.Getenv("GONEREPO") == "" {
 		os.Setenv("GONEREPO", "gonebot-dev/gonerepo")
 	}

@@ -25,20 +25,21 @@ func (s selectPluginsScene) Name() string {
 }
 
 func (s selectPluginsScene) Init() tea.Cmd {
+	base.RepoSyncing = true
 	return nil
 }
 
 func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 	if api.Finished && api.CurrentCommit.SHA == "" {
-		cmds = append(cmds, s.plugins.ToggleSpinner())
+		cmds = append(cmds, s.plugins.StartSpinner())
 		api.Finished = false
 		go api.SyncRepo()
 	}
 	if base.RepoSyncing && api.Finished && api.CurrentCommit.SHA != "" {
 		base.RepoSyncing = false
 		s.plugins.SetItems(api.Plugins)
-		cmds = append(cmds, s.plugins.ToggleSpinner())
+		s.plugins.StopSpinner()
 	}
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -51,7 +52,7 @@ func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if api.Finished {
 				base.RepoSyncing = true
 				api.CurrentCommit.SHA = ""
-				cmds = append(cmds, s.plugins.ToggleSpinner())
+				cmds = append(cmds, s.plugins.StartSpinner())
 				go api.SyncRepo()
 				selectedlist.SelectedList.SelectedAdapters = make([]list.Item, 0)
 				selectedlist.SelectedList.SelectedPlugins = make([]list.Item, 0)
@@ -103,7 +104,7 @@ func (s selectPluginsScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, router.NextScene("SelectAdaptersScene"))
 		case tea.KeyCtrlRight:
 			selectedlist.SelectedList.Focus = "none"
-			// TODO: Jump to the next scene
+			cmds = append(cmds, router.NextScene("CreateBotScene"))
 		}
 	case tea.WindowSizeMsg:
 		base.WindowHeight = msg.Height

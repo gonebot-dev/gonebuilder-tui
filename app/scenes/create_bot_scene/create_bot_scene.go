@@ -2,6 +2,8 @@ package createbotscene
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
@@ -9,6 +11,7 @@ import (
 	"github.com/gonebot-dev/gonebuilder-tui/app/base"
 	selectedlist "github.com/gonebot-dev/gonebuilder-tui/app/components/selected_list"
 	"github.com/gonebot-dev/gonebuilder-tui/app/router"
+	botcreator "github.com/gonebot-dev/gonebuilder-tui/app/utils/bot_creator"
 	t "github.com/gonebot-dev/gonebuilder-tui/app/utils/translator"
 )
 
@@ -55,7 +58,24 @@ func (s createBotScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmds = append(cmds, cmd)
 
 	if s.confirmForm.State == huh.StateCompleted {
-		// TODO: create bot
+		if s.confirmForm.GetBool("confirm") {
+			base.PostFunc = func() (err error) {
+				err = botcreator.CreateBot(
+					base.BotFolder, base.BotName,
+					base.BotVersion, base.BotDesc,
+					&selectedlist.SelectedList.SelectedAdapters,
+					&selectedlist.SelectedList.SelectedPlugins,
+				)
+				if err == nil {
+					fmt.Printf("\nBot created successfully!\n")
+					fmt.Printf("To run your bot, use the following command:\n")
+					fmt.Printf("\n\tcd %s\n", strings.ReplaceAll(filepath.Join(base.BotFolder, base.BotName), "\\", "/"))
+					fmt.Printf("\tgo run %s\n", botcreator.FormatName(base.BotName))
+				}
+				return
+			}
+		}
+		return s, tea.Quit
 	}
 
 	return s, tea.Batch(cmds...)
@@ -82,15 +102,13 @@ func (s createBotScene) View() string {
 			),
 		),
 		base.Footer.Render(
-			fmt.Sprintf("%s%s%s%s%s%s%s%s",
+			fmt.Sprintf("%s%s%s%s%s%s",
 				base.FooterTitle.Render(t.Translate("Exit")),
 				base.FooterText.Render("Ctrl+C"),
 				base.FooterTitle.Render(t.Translate("让我们说中文")),
 				base.FooterText.Render("Ctrl+F"),
 				base.FooterTitle.Render(t.Translate("Refresh")),
 				base.FooterText.Render("Ctrl+R"),
-				base.FooterTitle.Render(t.Translate("Next")),
-				base.FooterText.Render("Ctrl+Right"),
 			),
 		),
 	))

@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gonebot-dev/gonebuilder-tui/app/base"
 	"github.com/gonebot-dev/gonebuilder-tui/app/router"
+	createbotscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/create_bot_scene"
 	initialscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/initial_scene"
 	menuscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/menu_scene"
 	newbotscene "github.com/gonebot-dev/gonebuilder-tui/app/scenes/new_bot_scene"
@@ -67,6 +68,7 @@ func init() {
 	router.RegisterScene(newbotscene.NewBotScene)
 	router.RegisterScene(selectadaptersscene.SelectAdaptersScene)
 	router.RegisterScene(selectpluginsscene.SelectPluginsScene)
+	router.RegisterScene(createbotscene.CreateBotScene)
 }
 
 func CreateApp() App {

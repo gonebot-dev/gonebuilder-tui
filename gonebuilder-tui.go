@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/gonebot-dev/gonebuilder-tui/app"
+	"github.com/gonebot-dev/gonebuilder-tui/app/base"
 	"github.com/joho/godotenv"
 )
 
@@ -22,5 +23,8 @@ func main() {
 	if _, err := app.Run(); err != nil {
 		fmt.Println("Error running gonebuilder: ", err)
 		os.Exit(1)
+	}
+	if base.PostFunc != nil {
+		base.PostFunc()
 	}
 }

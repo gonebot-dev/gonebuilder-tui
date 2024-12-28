@@ -7,44 +7,17 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/charmbracelet/bubbles/list"
 	"github.com/gonebot-dev/gonebuilder-tui/app/utils/api"
+	"github.com/rs/zerolog"
 )
-
-type logString struct {
-	level string
-	text  string
-}
 
 var mutex sync.RWMutex
 var progress = 0
-var createText []logString
 
-const (
-	INF = "INF"
-	SUC = "SUC"
-	WRN = "WRN"
-	ERR = "ERR"
-)
-
-func addMsg(level, text string) {
-	mutex.Lock()
-	createText = append(createText, logString{level: level, text: text})
-	if level == SUC {
-		progress += 1
-	}
-	mutex.Unlock()
-}
-
-func GetInfo() (prog int, text []logString) {
-	mutex.RLock()
-	prog = progress
-	copy(text, createText)
-	mutex.RUnlock()
-	return
-}
-
-func formatName(name string) string {
+func FormatName(name string) string {
 	builder := strings.Builder{}
 	for idx, char := range name {
 		if (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') || (idx > 0 && (char >= '0' && char <= '9')) {
@@ -56,7 +29,7 @@ func formatName(name string) string {
 	return builder.String()
 }
 
-func writeGoFile(path, name, version, desc string, adapters *[]api.AdapterInfo, plugins *[]api.PluginInfo) (err error) {
+func writeGoFile(path, name, version, desc string, adapters *[]list.Item, plugins *[]list.Item) (err error) {
 	adaptersImports := strings.Builder{}
 	pluginsImports := strings.Builder{}
 	adaptersLoads := strings.Builder{}
@@ -64,11 +37,13 @@ func writeGoFile(path, name, version, desc string, adapters *[]api.AdapterInfo, 
 	filePath := filepath.Join(path, name+".go")
 	fileStr := strings.Builder{}
 
-	for _, adapter := range *adapters {
+	for _, adap := range *adapters {
+		adapter := adap.(api.AdapterInfo)
 		adaptersImports.WriteString(fmt.Sprintf("\t%s \"%s\"\n", adapter.Name, adapter.Package))
 		adaptersLoads.WriteString(fmt.Sprintf("\tgonebot.LoadAdapter(&%s)\n", adapter.Adapter))
 	}
-	for _, plugin := range *plugins {
+	for _, plug := range *plugins {
+		plugin := plug.(api.PluginInfo)
 		pluginsImports.WriteString(fmt.Sprintf("\t%s \"%s\"\n", plugin.Name, plugin.Package))
 		pluginsLoads.WriteString(fmt.Sprintf("\tgonebot.LoadPlugin(&%s)\n", plugin.Plugin))
 	}
@@ -94,55 +69,78 @@ func writeGoFile(path, name, version, desc string, adapters *[]api.AdapterInfo, 
 	return
 }
 
-func CreateBot(folderPath, botName, botVersion, botDesc string, adapters *[]api.AdapterInfo, plugins *[]api.PluginInfo) (err error) {
+func CreateBot(folderPath, botName, botVersion, botDesc string, adapters *[]list.Item, plugins *[]list.Item) (err error) {
+	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.DateTime}
+	logger := zerolog.New(output).With().Timestamp().Logger()
 	mutex.Lock()
 	progress = 0
-	createText = make([]logString, 0)
-	createText = append(createText, logString{level: "INF", text: "Creating/Replacing folder..."})
 	mutex.Unlock()
 	botFolder := strings.ReplaceAll(filepath.Join(folderPath, botName), "\\", "/")
 	if _, err = os.Stat(botFolder); err == nil || !os.IsNotExist(err) {
-		addMsg(INF, "Removing existing folder...")
+		logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Removing existing folder...", progress)
 		if err = os.RemoveAll(botFolder); err != nil {
-			addMsg(ERR, fmt.Sprintf("Error removing folder: %s", err.Error()))
+			logger.WithLevel(zerolog.ErrorLevel).Msgf("[%d/6] Error removing folder: %s", progress, err.Error())
 			return
 		}
-		addMsg(INF, "Removed successfully!")
+		logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Removed successfully!", progress)
 	}
-	addMsg(INF, "Creating bot folder...")
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Creating bot folder...", progress)
 	if err = os.Mkdir(botFolder, os.ModePerm); err != nil {
-		addMsg(ERR, fmt.Sprintf("Error creating folder: %s", err.Error()))
+		logger.WithLevel(zerolog.ErrorLevel).Msgf("[%d/6] Error creating folder: %s", progress, err.Error())
 		return
 	}
-	addMsg(SUC, "Created folder successfully!")
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Created folder successfully!", progress)
+	mutex.Lock()
+	progress += 1
+	mutex.Unlock()
 	pwd, _ := os.Getwd()
 	os.Chdir(botFolder)
-	moduleName := formatName(botName)
-	addMsg(INF, fmt.Sprintf("Creating go module %s...", moduleName))
-	if err = exec.Command("go", "mod", "init", moduleName).Run(); err != nil {
-		addMsg(ERR, fmt.Sprintf("Error creating go module: exited with %s", err.Error()))
+	moduleName := FormatName(botName)
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Creating go module %s...", progress, moduleName)
+	var cmdout []byte
+	if cmdout, err = exec.Command("go", "mod", "init", moduleName).CombinedOutput(); err != nil {
+		fmt.Println(string(cmdout))
+		logger.WithLevel(zerolog.ErrorLevel).Msgf("[%d/6] Error creating go module: exited with %s", progress, err.Error())
 		return
 	}
-	addMsg(SUC, fmt.Sprintf("Created go module %s successfully!", moduleName))
-	addMsg(INF, fmt.Sprintf("Writing %s...", moduleName))
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Created go module %s successfully!", progress, moduleName)
+	mutex.Lock()
+	progress += 1
+	mutex.Unlock()
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Writing %s...", progress, moduleName)
 	if err = writeGoFile(botFolder, moduleName, botVersion, botDesc, adapters, plugins); err != nil {
-		addMsg(ERR, fmt.Sprintf("Error writing go file: exited with %s", err.Error()))
+		logger.WithLevel(zerolog.ErrorLevel).Msgf("[%d/6] Error writing go file: exited with %s", progress, err.Error())
 		return
 	}
-	addMsg(SUC, fmt.Sprintf("Wrote %s.go successfully!", moduleName))
-	addMsg(INF, "Formatting go file...")
-	if err = exec.Command("go", "fmt").Run(); err != nil {
-		addMsg(ERR, fmt.Sprintf("Error formatting go file: exited with %s", err.Error()))
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Wrote %s.go successfully!", progress, moduleName)
+	mutex.Lock()
+	progress += 1
+	mutex.Unlock()
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Formatting go file...", progress)
+	if cmdout, err = exec.Command("go", "fmt").CombinedOutput(); err != nil {
+		fmt.Println(string(cmdout))
+		logger.WithLevel(zerolog.ErrorLevel).Msgf("[%d/6] Error formatting go file: exited with %s", progress, err.Error())
 		return
 	}
-	addMsg(SUC, "Formatted go file successfully!")
-	addMsg(INF, "Running go mod tidy...")
-	if err = exec.Command("go", "mod", "tidy").Run(); err != nil {
-		addMsg(ERR, fmt.Sprintf("Error running go mod tidy: exited with %s", err.Error()))
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Formatted go file successfully!", progress)
+	mutex.Lock()
+	progress += 1
+	mutex.Unlock()
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Running go mod tidy(this should take some time)...", progress)
+	if cmdout, err = exec.Command("go", "mod", "tidy").CombinedOutput(); err != nil {
+		fmt.Println(string(cmdout))
+		logger.WithLevel(zerolog.ErrorLevel).Msgf("[%d/6] Error running go mod tidy: exited with %s", progress, err.Error())
 		return
 	}
-	addMsg(SUC, "Ran go mod tidy successfully!")
-	addMsg(SUC, "Bot created successfully!")
+	fmt.Println(string(cmdout))
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Ran go mod tidy successfully!", progress)
+	mutex.Lock()
+	progress += 1
+	mutex.Unlock()
+	logger.WithLevel(zerolog.InfoLevel).Msgf("[%d/6] Bot created successfully!", progress)
+	mutex.Lock()
+	progress += 1
+	mutex.Unlock()
 	os.Chdir(pwd)
 	return
 }

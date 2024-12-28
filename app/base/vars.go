@@ -23,4 +23,6 @@ var (
 	BotVersion string
 	BotDesc    string
 	BotFolder  string
+
+	PostFunc func() error = nil
 )

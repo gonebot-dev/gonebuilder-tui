@@ -25,20 +25,21 @@ func (s selectAdaptersScene) Name() string {
 }
 
 func (s selectAdaptersScene) Init() tea.Cmd {
+	base.RepoSyncing = true
 	return nil
 }
 
 func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 	if api.Finished && api.CurrentCommit.SHA == "" {
-		cmds = append(cmds, s.adapters.ToggleSpinner())
+		cmds = append(cmds, s.adapters.StartSpinner())
 		api.Finished = false
 		go api.SyncRepo()
 	}
 	if base.RepoSyncing && api.Finished && api.CurrentCommit.SHA != "" {
 		base.RepoSyncing = false
 		s.adapters.SetItems(api.Adapters)
-		cmds = append(cmds, s.adapters.ToggleSpinner())
+		s.adapters.StopSpinner()
 	}
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -51,7 +52,7 @@ func (s selectAdaptersScene) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if api.Finished {
 				base.RepoSyncing = true
 				api.CurrentCommit.SHA = ""
-				cmds = append(cmds, s.adapters.ToggleSpinner())
+				cmds = append(cmds, s.adapters.StartSpinner())
 				go api.SyncRepo()
 				selectedlist.SelectedList.SelectedAdapters = make([]list.Item, 0)
 				selectedlist.SelectedList.SelectedPlugins = make([]list.Item, 0)

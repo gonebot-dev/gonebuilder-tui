@@ -156,8 +156,8 @@ var MenuScene = menuScene{
 					func() []huh.Option[int] {
 						return []huh.Option[int]{
 							huh.NewOption(t.Translate("Create a new gonebot."), base.NewBot),
-							huh.NewOption(t.Translate("Modify an existing gonebot."), base.EditBot),
-							huh.NewOption(t.Translate("Manage .env configurations."), base.DotEnv),
+							huh.NewOption(t.Translate("Modify an existing gonebot.(Under construction)"), base.EditBot),
+							huh.NewOption(t.Translate("Manage .env configurations.(Under construction)"), base.DotEnv),
 							huh.NewOption(t.Translate("Explore plugin repository.(Desktop required)"), base.Plugins),
 							huh.NewOption(t.Translate("Explore adapter repository.(Desktop required)"), base.Adapters),
 							huh.NewOption(t.Translate("Exit the application."), base.ExitApp),

@@ -9,8 +9,30 @@
 	<p>✨ Text-based tool for building your own gonebot ✨</p>
 </div>
 <div align="center">
-    <a href="https://github.com/gonebot-dev/gonerepo/actions"><img src="https://github.com/gonebot-dev/gonerepo/actions/workflows/ubuntu.yml/badge.svg" alt="Build Status"></a>
 	<a href="https://github.com/tboox/tbox/blob/master/LICENSE.md">
 	  <img src="https://img.shields.io/github/license/gonebot-dev/gonerepo.svg?colorB=f48041&style=flat-square" alt="license" />
 	</a>
 </div>
+
+## Introduction ([中文](./README_zh.md))
+
+GoneBuilder is a text-based tool for building your own gonebot. It provides a simple and intuitive interface for users to create their own gonebot by selecting and configuring various components.
+
+## Features
+
+- 🌟 Simple and intuitive interface for building gonebot
+- 🛠️ Support for selecting and configuring various components
+- 🎨 Easy to use and customize
+- 🌐 Compatible with various operating systems
+
+## Installation
+
+To install GoneBuilder, you can just use go:
+
+(You should first add `$(go env GOPATH)/bin` to PATH)
+
+```bash
+go install github.com/gonebot-dev/gonebuilder-tui@latest
+```
+
+Then run the command `gonebuilder-tui` and you are ready to go!

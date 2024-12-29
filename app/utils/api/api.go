@@ -15,7 +15,6 @@ func getLatestCommit() (commit CommitInfo, err error) {
 	if err != nil {
 		return
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("token %s", "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"))
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
@@ -36,7 +35,6 @@ func getTree(commit CommitInfo) (files []FileInfo, err error) {
 	if err != nil {
 		return
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("token %s", "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"))
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
@@ -98,7 +96,6 @@ func SyncRepo() {
 			if Err != nil {
 				return
 			}
-			req.Header.Add("Authorization", fmt.Sprintf("token %s", "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"))
 			resp, Err = http.DefaultClient.Do(req)
 			if Err != nil {
 				Finished = true
@@ -123,7 +120,6 @@ func SyncRepo() {
 			if Err != nil {
 				return
 			}
-			req.Header.Add("Authorization", fmt.Sprintf("token %s", "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"))
 			resp, Err = http.DefaultClient.Do(req)
 			if Err != nil {
 				Finished = true
